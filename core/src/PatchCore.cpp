@@ -58,7 +58,6 @@ Result createPatch(
         }
 
         LOGI("Old file size: %zu, New file size: %zu", old_fb.size, new_fb.size);
-        result.originalSize = new_fb.size;
 
         cctx = ZSTD_createCCtx();
         if (!cctx) {
@@ -92,6 +91,7 @@ Result createPatch(
         }
 
         LOGI("Compressed size: %zu -> %zu", new_fb.size, compressed_size);
+        result.originalSize = compressed_size;
 
         // 写入补丁文件
         if (FileBuffer::writeToFile(patchFilePath, patch_data, compressed_size)) {
@@ -130,8 +130,6 @@ Result applyPatch(
             break;
         }
 
-        result.originalSize = patch_fb.size;
-
         dctx = ZSTD_createDCtx();
         if (!dctx) {
             result.message = MSG_CONTEXT_ERROR;
@@ -161,6 +159,8 @@ Result applyPatch(
             LOGE("Decompression error: %s", ZSTD_getErrorName(decompress_result));
             break;
         }
+
+        result.originalSize = decompress_result;
 
         // 写入新文件
         if (FileBuffer::writeToFile(newFilePath, new_data, decompress_result)) {
