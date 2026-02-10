@@ -1,14 +1,9 @@
-cmake_minimum_required(VERSION 3.18.1)
+cmake_minimum_required(VERSION 3.22.1)
 project("zpatch_jni")
 
 # 设置 C++ 标准
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# 支持 16KB 页面大小 (Android 15+)
-if(ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES)
-    set(CMAKE_ANDROID_16KB_PAGE_SIZE TRUE)
-endif()
 
 # Core 目录路径 (通过 Gradle 传入的 ANDROID_PROJECT_ROOT 寻址)
 # ANDROID_PROJECT_ROOT = android/ 目录
@@ -25,6 +20,15 @@ set(JNI_SOURCES
 
 # 构建 JNI 共享库
 add_library(zpatch_jni SHARED ${JNI_SOURCES})
+
+# 支持 16KB 页面大小 (Android 15+)
+# NDK r27+ 通过 ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES 自动处理
+# 额外添加链接器标志确保所有架构正确对齐
+if(ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES)
+    target_link_options(zpatch_jni PRIVATE
+        "LINKER:-z,max-page-size=16384"
+    )
+endif()
 
 # 链接 zpatch_core 静态库
 target_link_libraries(zpatch_jni
