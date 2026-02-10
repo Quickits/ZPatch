@@ -9,3 +9,8 @@
 # CMake build
 build/
 cmake-build-*/
+
+# CLI output
+cli/build/
+cli/dist/
+cli/zpatch-*
