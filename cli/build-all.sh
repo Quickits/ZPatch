@@ -21,7 +21,7 @@ else
     echo "  -> Failed to build macOS arm64"
 fi
 
-# Linux amd64 (x86_64, 需要在 Linux 环境或使用 Docker)
+# Linux amd64 (x86_64, requires Linux environment or Docker)
 echo "Building Linux amd64..."
 ./build-linux-amd64.sh
 if [ -f dist/zpatch-linux-amd64 ]; then

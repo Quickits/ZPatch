@@ -15,26 +15,26 @@
 
 namespace zpatch {
 
-// 版本信息
+// Version information
 ZPATCH_API const char* getVersion();
 
-// 操作结果
+// Operation result
 struct Result {
-    int code;           // 0 = 成功, 非 0 = 失败
-    const char* message; // 错误信息 (静态字符串，无需释放)
-    uint64_t originalSize; // 原始文件大小
+    int code;           // 0 = success, non-zero = failure
+    const char* message; // Error message (static string, do not free)
+    uint64_t originalSize; // Original file size
 };
 
-// 创建补丁
-// 使用旧文件作为字典，将新文件压缩成补丁文件
+// Create patch
+// Compress new file into patch using old file as dictionary
 ZPATCH_API Result createPatch(
     const char* oldFilePath,
     const char* newFilePath,
     const char* patchFilePath
 );
 
-// 应用补丁
-// 使用旧文件和补丁文件，还原出新文件
+// Apply patch
+// Restore new file using old file and patch file
 ZPATCH_API Result applyPatch(
     const char* oldFilePath,
     const char* patchFilePath,

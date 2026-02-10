@@ -18,7 +18,7 @@
 
 namespace zpatch {
 
-// 静态错误消息
+// Static error messages
 static const char* MSG_SUCCESS = "Success";
 static const char* MSG_READ_FAILED = "Failed to read input files";
 static const char* MSG_WRITE_FAILED = "Failed to write output file";
@@ -65,13 +65,13 @@ Result createPatch(
             break;
         }
 
-        // 配置压缩参数
+        // Configure compression parameters
         unsigned wlog = calculate_window_log(static_cast<unsigned long long>(new_fb.size));
         ZSTD_CCtx_setParameter(cctx, ZSTD_c_windowLog, wlog);
         ZSTD_CCtx_setParameter(cctx, ZSTD_c_enableLongDistanceMatching, 1);
         ZSTD_CCtx_setParameter(cctx, ZSTD_c_compressionLevel, COMPRESSION_LEVEL);
 
-        // 分配合配缓冲区
+        // Allocate compression buffer
         size_t patch_size = ZSTD_compressBound(new_fb.size);
         patch_data = malloc(patch_size);
         if (!patch_data) {
@@ -79,7 +79,7 @@ Result createPatch(
             break;
         }
 
-        // 使用旧文件作为字典进行压缩
+        // Compress using old file as dictionary
         ZSTD_CCtx_refPrefix(cctx, old_fb.data, old_fb.size);
         size_t compressed_size = ZSTD_compress2(cctx, patch_data, patch_size,
                                                  new_fb.data, new_fb.size);
@@ -93,7 +93,7 @@ Result createPatch(
         LOGI("Compressed size: %zu -> %zu", new_fb.size, compressed_size);
         result.originalSize = compressed_size;
 
-        // 写入补丁文件
+        // Write patch file
         if (FileBuffer::writeToFile(patchFilePath, patch_data, compressed_size)) {
             LOGI("Patch written to: %s", patchFilePath);
             result.code = 0;
@@ -103,7 +103,7 @@ Result createPatch(
         }
     } while (0);
 
-    // 清理资源
+    // Cleanup resources
     if (patch_data) free(patch_data);
     if (cctx) ZSTD_freeCCtx(cctx);
     old_fb.release();
@@ -136,7 +136,7 @@ Result applyPatch(
             break;
         }
 
-        // 获取解压后大小
+        // Get decompressed size
         new_size = ZSTD_getFrameContentSize(patch_fb.data, patch_fb.size);
         if (new_size == ZSTD_CONTENTSIZE_ERROR || new_size == ZSTD_CONTENTSIZE_UNKNOWN) {
             result.message = MSG_INVALID_PATCH;
@@ -149,7 +149,7 @@ Result applyPatch(
             break;
         }
 
-        // 使用旧文件作为字典进行解压
+        // Decompress using old file as dictionary
         ZSTD_DCtx_refPrefix(dctx, old_fb.data, old_fb.size);
         size_t decompress_result = ZSTD_decompressDCtx(dctx, new_data, new_size,
                                                        patch_fb.data, patch_fb.size);
@@ -162,7 +162,7 @@ Result applyPatch(
 
         result.originalSize = decompress_result;
 
-        // 写入新文件
+        // Write new file
         if (FileBuffer::writeToFile(newFilePath, new_data, decompress_result)) {
             result.code = 0;
             result.message = MSG_SUCCESS;
@@ -171,7 +171,7 @@ Result applyPatch(
         }
     } while (0);
 
-    // 清理资源
+    // Cleanup resources
     if (new_data) free(new_data);
     if (dctx) ZSTD_freeDCtx(dctx);
     old_fb.release();

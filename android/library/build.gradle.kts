@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        // 传递 Android 项目根目录给 CMake
+        // Pass Android project root directory to CMake
         externalNativeBuild {
             cmake {
                 arguments += listOf(
@@ -29,7 +29,7 @@ android {
         }
     }
 
-    // 指定 NDK 版本 (支持 16KB 页面)
+    // Specify NDK version (supports 16KB page size)
     ndkVersion = "27.0.12077973"
 
     buildTypes {
