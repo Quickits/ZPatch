@@ -11,9 +11,19 @@ android {
 
     defaultConfig {
         minSdk = 23
+        ndk {
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        // 传递 Android 项目根目录给 CMake
+        externalNativeBuild {
+            cmake {
+                arguments += listOf("-DANDROID_PROJECT_ROOT=${rootProject.projectDir.absolutePath}")
+            }
+        }
     }
 
     buildTypes {
@@ -31,6 +41,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+        }
     }
 }
 
