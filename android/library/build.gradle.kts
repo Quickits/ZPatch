@@ -21,10 +21,16 @@ android {
         // 传递 Android 项目根目录给 CMake
         externalNativeBuild {
             cmake {
-                arguments += listOf("-DANDROID_PROJECT_ROOT=${rootProject.projectDir.absolutePath}")
+                arguments += listOf(
+                    "-DANDROID_PROJECT_ROOT=${rootProject.projectDir.absolutePath}",
+                    "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+                )
             }
         }
     }
+
+    // 指定 NDK 版本 (支持 16KB 页面)
+    ndkVersion = "27.0.12077973"
 
     buildTypes {
         release {

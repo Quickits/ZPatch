@@ -5,6 +5,11 @@ project("zpatch_jni")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# 支持 16KB 页面大小 (Android 15+)
+if(ANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES)
+    set(CMAKE_ANDROID_16KB_PAGE_SIZE TRUE)
+endif()
+
 # Core 目录路径 (通过 Gradle 传入的 ANDROID_PROJECT_ROOT 寻址)
 # ANDROID_PROJECT_ROOT = android/ 目录
 # core/ 目录与 android/ 同级
