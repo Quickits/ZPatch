@@ -78,13 +78,16 @@ jobs:
         run: |
           cd android
           ./gradlew :library:assembleRelease
-          ./gradlew :library:bundleReleaseAar
 
-      - name: Upload AAR
+      - name: Rename and upload AAR
+        run: |
+          cp android/library/build/outputs/aar/library-release.aar zpatch-android.aar
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: zpatch-android-aar
-          path: android/library/build/outputs/aar/library-release.aar
+          name: zpatch-android
+          path: zpatch-android.aar
 
   release:
     needs: [build-macos, build-linux, build-android]
@@ -107,4 +110,4 @@ jobs:
             artifacts/zpatch-darwin-amd64/zpatch-darwin-amd64 \
             artifacts/zpatch-darwin-arm64/zpatch-darwin-arm64 \
             artifacts/zpatch-linux-amd64/zpatch-linux-amd64 \
-            artifacts/zpatch-android-aar/library-release.aar
+            artifacts/zpatch-android/zpatch-android.aar
